@@ -27,7 +27,7 @@ run: build devserver
 
 build: develop
 	@echo "Building SASS..."
-	@bin/compass compile --force --output-style=compressed
+	#@bin/compass compile --force --output-style=compressed
 
 	@echo "=== Build complete. ==="
 
@@ -126,18 +126,18 @@ config.rb:
 	@gem install compass --install-dir ./.Gems
 
 	@echo "Configuring Compass..."
-	@compass init -x sass --prepare --environment development --relative-assets \
-		--sass-dir=$(PWD)/assets/style/source \
-		--css-dir=$(PWD)/assets/style/static/compiled \
-		--images-dir=$(PWD)/assets/img/static \
-		--javascripts-dir=$(PWD)/assets/js/static \
-		--fonts-dir=$(PWD)/assets/ext/static/fonts;
+	#@compass init -x sass --prepare --environment development --relative-assets \
+	#					--sass-dir=$(PWD)/assets/style/source \
+	#					--css-dir=$(PWD)/assets/style/static/compiled \
+	#					--images-dir=$(PWD)/assets/img/static \
+	#					--javascripts-dir=$(PWD)/assets/js/static \
+	#					--fonts-dir=$(PWD)/assets/ext/static/fonts ./;
 
 	@echo "Symlinking Compass binaries..."
-	@ln -s $(PWD)/.Gems/bin/compass $(PWD)/bin/compass
-	@ln -s $(PWD)/.Gems/bin/sass $(PWD)/bin/sass
-	@ln -s $(PWD)/.Gems/bin/scss $(PWD)/bin/scss
-	@ln -s $(PWD)/.Gems/bin/sass-convert $(PWD)/bin/sass-convert
+	#@ln -s $(PWD)/.Gems/bin/compass $(PWD)/bin/compass
+	#@ln -s $(PWD)/.Gems/bin/sass $(PWD)/bin/sass
+	#@ln -s $(PWD)/.Gems/bin/scss $(PWD)/bin/scss
+	#@ln -s $(PWD)/.Gems/bin/sass-convert $(PWD)/bin/sass-convert
 
 	@echo "Cleaning junk..."
 	@rm -fr ./stylesheets ./sass
