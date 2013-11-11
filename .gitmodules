@@ -1,0 +1,9 @@
+[submodule "coolapp/lib/appfactory"]
+	path = coolapp/lib/appfactory
+	url = git@github.com:momentum/appfactory.git
+[submodule "coolapp/lib/apptools"]
+	path = coolapp/lib/apptools
+	url = git@github.com:momentum/apptools.git
+[submodule "assets/js/source/apptools"]
+	path = assets/js/source/apptools
+	url = git@github.com:momentum/AppToolsJS.git
