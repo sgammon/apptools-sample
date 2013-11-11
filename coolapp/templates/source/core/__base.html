@@ -1,0 +1,100 @@
+<!doctype html>
+{%- block _tpl_root -%}
+{% if not page.manifest %}
+<html class="no-js" lang="en" prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb apptools-sample: http://ogp.me/ns/fb/apptools-sample#">
+{% else %}
+<html class="no-js" lang="en" prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# apptools-sample: http://ogp.me/ns/fb/apptools-sample#" manifest="{{ page.manifest.location }}">
+{%- endif -%}
+<head>
+    {%- block head -%}
+
+        {% block meta %}
+        <!-- Meta -->
+        <meta charset="utf-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        {% if _meta.get('google', {}).get('site_verification', False) %}<meta name="google-site-verification" content="{{ _meta.get('google').get('site_verification') }}" />{% endif -%}
+
+        {% block meta_basic %}
+        <!-- Info -->
+        <meta name="author" content="{{ _meta.get('author', 'Keen IO <keen.io>') }}" />
+        <meta name="publisher" content="{{ _meta.get('publisher', 'Keen IO <keen.io>') }}" />
+        <meta name="keywords" content="{{ ','.join(_meta.get('keywords', [])) }}" />
+        <meta name="copyright" content="{{ _meta.get('copyright', 'Keen IO (c) 2013') }}" />
+        <meta name="description" content="{{ _meta.get('description', 'Welcome to apptools! :)')|safe }}" />
+        <meta name="application-name" content="{{ _meta.get('application-name', 'apptools') }}" />
+        <meta name="robots" content="{{ _meta.get('robots', 'index, follow') }}" />
+        <meta name="viewport" content="{{ _meta.get('viewport', '') }}" />
+        <meta name="revisit-after" content="{{ _meta.get('revisit-after', '7 days') }}" />
+        {% if len(_meta.get('keywords')) > 2 %}<!-- {{ ','.join(_meta.get('keywords')[0:3]) }} -->
+        {%- endif -%}
+        {%- endblock meta_basic -%}
+        {%- endblock meta %}
+
+        <!-- Title -->
+        <title>{% block title_prefix %}apptools{% endblock title_prefix %}{% block title_seperator %} / {% endblock %}{% block title %}welcome{% endblock %}</title>
+
+        <!-- Mobile/Extras -->
+        <meta name="MobileOptimized" content="640">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+        <!-- Icons -->
+        <link rel="icon" href="/favicon.png" type="image/png" />
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+        {% block prenorth -%}{%- endblock -%}
+        {% block stylesheets %}
+        <!-- Stylesheets -->
+        <link rel='stylesheet' href="{{ asset.style('app', 'compiled') }}" />
+        {% endblock stylesheets -%}
+        {%- block postnorth -%}{% endblock %}
+        {%- if not page.mobile %}
+        <!-- JS Pre-Init -->
+        <script id='js-preinit' type='text/javascript' data-role='appclock'>
+             var __pn=window.performance.now?function(){return window.performance.now.call(window.performance)}:
+                window.performance.webkitNow?function(){return window.performance.webkitNow.call(window.performance)}:
+                function(){return +new Date()},deferred=[],__clock={pn:__pn,ts:[__pn()],clockpoint:function(c,v,s,l,o){
+                this.ts.push(this.track([window.__pn(),[c,v,s,l,o]]))},track:function(t){return t}};if(window.location.hash=="#_=_"){window.location.hash=""};
+        </script>
+        {%- else %}
+        <!-- JS Pre-init (MOBILE) -->
+        <script id='js-preinit' type='text/javascript' data-role='appclock'>
+            var __pn = function () { return +new Date(); }, deferred = _gaq = [], _gac = _gac = {},
+                __clock = {pn: __pn, ts: [__pn()], clockpoint: function (c,v,s,l,o) {this.ts.push(
+                this.track([window.__pn(), [c, v, s, l, o]]));}, track: function (t) {return t;}};
+                if(window.location.hash=="#_=_"){window.location.hash="";};
+        </script>
+        {% endif %}
+        {% block page_services %}
+        {%- if page.services %}
+        <!-- AppTools Config -->
+        <script id='js-config' type='application/json' data-role='pageconfig'>
+            {%- block js_pageobject -%}
+            {% from "macros/apptools.html" import build_native_page_object %}
+            {{ build_native_page_object(page, transport, security) }}
+            {%- endblock js_pageobject %}
+        </script>
+        {%- endif -%}
+        {% endblock page_services %}
+
+        {%- block pagestyles %}{% endblock pagestyles %}
+    {%- endblock %}
+
+</head>
+
+<body role="application" lang="en" translate="yes" dir="ltr"{% if mobile %} data-mobile="true"{% endif %}>
+{% block body %}{%- endblock body -%}
+{%- block jspagedata -%}<!-- Page Data -->
+{%- endblock jspagedata %}
+
+{% block presouth %}{% endblock presouth -%}
+{%- block south -%}
+<!-- Deferred JS -->
+<div id='js-deferred' class='hidden resource'></div><!-- end #js-deferred -->
+{%- endblock south -%}
+
+{%- block postsouth %}{% endblock postsouth %}
+</body>
+</html>
+{%- endblock _tpl_root -%}
