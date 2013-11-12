@@ -3,7 +3,6 @@ pytz
 jinja2
 webapp2
 protorpc
-protobuf
 webob
 slimmer
 requests
