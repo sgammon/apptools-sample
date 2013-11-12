@@ -1,6 +1,6 @@
-[submodule "coolapp/lib/appfactory"]
-	path = coolapp/lib/appfactory
-	url = git@github.com:momentum/appfactory.git
 [submodule "coolapp/lib/apptools"]
 	path = coolapp/lib/apptools
 	url = git@github.com:momentum/apptools.git
+[submodule "coolapp/lib/appfactory"]
+	path = coolapp/lib/appfactory
+	url = git@github.com:momentum/appfactory.git
