@@ -1,3 +1,3 @@
-fatcatmap: compiled images
+compiled images
 
 description coming soon

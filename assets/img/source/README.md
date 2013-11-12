@@ -1,3 +1,3 @@
-fatcatmap: source images
+source images
 
 description coming soon

@@ -1,3 +1,3 @@
-fatcatmap: compiled ext
+compiled ext
 
 description coming soon
