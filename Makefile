@@ -87,7 +87,7 @@ forceclean: distclean
 	@git reset --hard
 
 	@echo "Cleaning libraries..."
-	@rm -fr assets/js/source/apptools fatcatmap/lib/apptools fatcatmap/lib/appfactory
+	@rm -fr assets/js/source/apptools coolapp/lib/apptools coolapp/lib/appfactory
 
 	@echo "Cleaning untracked files..."
 	@git clean -df
