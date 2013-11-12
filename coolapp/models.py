@@ -2,7 +2,7 @@
 
 '''
 
-    apptools-sample: guestbook models
+    apptools-sample: models
 
     :author: Sam Gammon <sam@keen.io>
     :copyright: (c) Keen IO, 2013

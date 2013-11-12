@@ -23,6 +23,11 @@ import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'coolapp'))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'coolapp/lib'))
 
+# coolapp!
+from coolapp import handlers
+from coolapp import services
+from coolapp import templates
+
 ## apptools!
 from apptools import dispatch
 from apptools.rpc import mappers
@@ -55,28 +60,25 @@ else:
 
     return pywsgi.WSGIServer((interface, port), *args, **kwargs)
 
-# services! :)
-from coolapp.services import *
-
 
 def run(args):
 
-    '''  '''
+  '''  '''
 
-    try:
-      if len(sys.argv) > 1 and sys.argv[1] == 'services':
-        app, interface, port, label = rpc.initialize(), '127.0.0.1', 5001, 'services'
-      else:
-        app, interface, port, label = dispatch.gateway, '127.0.0.1', 5000, 'app'
+  try:
+    if len(sys.argv) > 1 and sys.argv[1] == 'services':
+      app, interface, port, label = rpc.initialize(), '127.0.0.1', 5001, 'services'
+    else:
+      app, interface, port, label = dispatch.gateway, '127.0.0.1', 5000, 'app'
 
-      httpd = server(interface, port, app)  # @TODO: ssl support
+    httpd = server(interface, port, app)  # @TODO: ssl support
 
-      print "Serving apptools-sample %s on port %s..." % (label, port)
-      httpd.serve_forever()
-      return 0
-    except Exception as e:
-      print "Encountered exception: %s" % e
-      return 1
+    print "Serving apptools-sample %s on port %s..." % (label, port)
+    httpd.serve_forever()
+    return 0
+  except Exception as e:
+    print "Encountered exception: %s" % e
+    return 1
 
 
 if __name__ == '__main__': sys.exit(run(sys.argv))

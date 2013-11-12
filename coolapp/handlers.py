@@ -2,7 +2,7 @@
 
 '''
 
-    apptools-sample handlers: landing
+    apptools-sample: handlers
 
     :author: Sam Gammon <sam@keen.io>
     :copyright: (c) Keen IO, 2013
@@ -16,17 +16,15 @@
 
 '''
 
-
 # apptools
-from apptools.util import decorators
+from apptools import web
 
-# handlers
-from coolapp import handlers, routing
+# routing
+from coolapp import routing
 
 
 @routing.rule('/', name='landing')
-@decorators.config(debug=True, path='coolapp.handlers.landing.Landing')
-class Landing(handlers.WebHandler):
+class Landing(web.WebHandler):
 
     ''' apptools-sample landing handler. '''
 

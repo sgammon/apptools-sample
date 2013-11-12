@@ -32,7 +32,7 @@ def get_rules():
     return [
 
         routes.HandlerPrefixRoute('coolapp.handlers.', [
-            Route('/', name='landing', handler='landing.Landing')
+            # app-wide non-decorator routes go here
         ])
 
     ] + rules
@@ -45,20 +45,28 @@ def rule(*args, **kwargs):
 
     global rules
 
-    # definitely a bound decorator
+    # definitely a bound decorator (look for a `route` attribute)
     if len(args) == 1 and isinstance(args[0], (type, type(rule))):
         target = args.pop()
-        if not hasattr(target, 'route'):
+        if hasattr(target, 'route'):
           rules.append(Route(target.route, name=target.__name__, handler='.'.join((target.__module__, target.__name__))))
+        else:
+          raise AttributeError('Bound-rule handler had no route: "%s".' % target)
         return target
 
     # definitely a callable decorator
-    new_route = Route(*args, **kwargs)
-    rules.append(new_route)
+    if 'handler' in kwargs:
+      new_route = Route(*args, **kwargs)
+      rules.append(new_route)
 
     def _decorate(target):
 
         ''' Decorate that target! '''
+
+        if 'handler' not in kwargs:
+          kwargs['handler'] = '.'.join((target.__module__, target.__name__))
+          new_route = Route(*args, **kwargs)
+          rules.append(new_route)
 
         target.route = new_route
         return target
