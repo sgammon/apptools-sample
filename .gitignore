@@ -29,6 +29,3 @@ config.rb
 assets/style/static/compiled/*
 dist/*
 build/*
-coolapp/lib/*
-coolapp/lib/apptools/*
-coolapp/lib/appfactory/*
