@@ -16,10 +16,12 @@
 
 '''
 
+import os
 
 ## Globals
 debug = True
 _config = {}
+production = (not debug) and os.environ.get('SERVER_SOFTWARE', 'dev') != 'dev'
 
 
 ## App settings

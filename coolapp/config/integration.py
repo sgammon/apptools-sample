@@ -76,3 +76,46 @@ _config['google.apis'] = {
     ]
 
 }
+
+## Layer9/AppFactory
+_config['layer9.appfactory'] = {
+
+    'enabled': True,
+    'logging': False,
+
+    'headers': {
+        'full_prefix': 'X-AppFactory',
+        'compact_prefix': 'XAF',
+        'use_compact': True
+    }
+
+}
+
+_config['layer9.appfactory.upstream'] = {
+
+    'debug': False,
+    'enabled': True,
+
+    'preloading': {
+        'gather_assets': True,
+        'enable_spdy_push': False,
+        'enable_link_fallback': False
+    },
+
+    'spdy': {
+
+        'push': {
+
+            'assets': {
+                'force_priority': False,
+                'default_priority': 7
+            }
+
+        }
+
+    }
+
+}
+
+_config['layer9.appfactory.frontline'] = {'debug': False, 'enabled': True}
+_config['layer9.appfactory.controller'] = {'debug': False, 'enabled': False}

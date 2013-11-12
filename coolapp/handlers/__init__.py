@@ -229,8 +229,11 @@ class WebHandler(core.BaseHandler):
                       the resulting response from a dispatched HTTP-based
                       method, such as ``WebHandler.GET``. '''
 
-        from main import bootstrapper
-        bootstrapper.preload(config.debug)
+        try:
+            from main import bootstrapper
+            bootstrapper.preload(config.debug)
+        except ImportError:
+            pass  # no bootstrapper, no problem
 
         try:
             _super = super(WebHandler, self)
