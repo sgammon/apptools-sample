@@ -43,6 +43,8 @@ _config['apptools.project.assets'] = {
             'config': _std_config,
 
             'assets': {
+                'd3': {'name': 'd3.v3', 'min': True, 'version': 'v3'},  # D3: data driven documents, yo
+                'jacked': {'min': True, 'version': 'v1'}  # Jacked: animation engine on steroids
             }
 
         },
@@ -82,18 +84,19 @@ _config['apptools.project.assets'] = {
     # Cascading Style Sheets
     'style': {
 
-        # Compiled (SASS) FCM Stylesheets
-        ('compiled', 'compiled'): {
+        # Static CSS
+        ('static', 'sample'): {
 
             'config': _std_config,
 
             'assets': {
+                'app': {'min': True, 'version': 'v1'}
             }
 
         },
 
-        # Device-specific Frames
-        ('frame', 'compiled/frame'): {
+        # Compiled (SASS) FCM Stylesheets
+        ('compiled', 'compiled'): {
 
             'config': _std_config,
 

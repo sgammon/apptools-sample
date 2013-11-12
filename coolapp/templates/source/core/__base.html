@@ -46,7 +46,7 @@
         {% block prenorth -%}{%- endblock -%}
         {% block stylesheets %}
         <!-- Stylesheets -->
-        {#<link rel='stylesheet' href="{{ asset.style('app', 'compiled') }}" />#}
+        <link rel='stylesheet' href="{{ asset.style('app', 'static') }}" />
         {% endblock stylesheets -%}
         {%- block postnorth -%}{% endblock %}
         {%- if not page.mobile %}
