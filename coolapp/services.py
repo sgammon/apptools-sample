@@ -145,7 +145,24 @@ class GuestbookService(rpc.Service):
         :returns: Same :py:class:`Signature` message, with
         a filled-in key and timestamp. '''
 
-    pass
+    # barely validate the email address
+    if '@' not in request.email or '.' not in request.email:
+      raise self.exceptions.invalid_email("Woops! That's not a valid email address, you silly goose.")
+
+    # check for an existing signature
+    user = model.Key(Signature, request.email)  # `Signature` key with `request.email` as the keyname
+
+    if user.get():
+      raise self.exceptions.user_exists("Woops! You've already signed the guestbook. Stop! geez")
+    else:
+
+      signature = request
+
+      # everything's cool, store the signature
+      signature.timestamp = datetime.datetime.now()
+      signature.put()
+
+      return signature
 
   @rpc.method(rpc.messages.VoidMessage, GuestbookList)
   def list(self, request):
@@ -160,5 +177,10 @@ class GuestbookService(rpc.Service):
         :returns: :py:class:`GuestbookList` describing existing
         guestbook signatures. '''
 
-    pass
+    # grab up to 50 signatures
+    guestbook = Signature.query().fetch()
 
+    return GuestbookList(**{
+      'count': len(guestbook),
+      'signatures': guestbook
+    })
