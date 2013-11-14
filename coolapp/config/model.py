@@ -31,7 +31,7 @@ _config['apptools.model.adapters.redis.Redis'] = {
         'default': 'local',
 
         # Redis Instances
-        'local': {'unix_socket_path': '/tmp/redis.sock'}
+        'local': {'host': '127.0.0.1', 'port': 6379}
 
     }
 

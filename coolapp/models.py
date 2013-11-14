@@ -23,11 +23,21 @@ import datetime
 from apptools import model
 
 
-class GuestbookEntry(model.Model):
+## RedisModel - Simply applies the Redis adapter.
+class RedisModel(model.Model):
 
-	''' Models a simple Guestbook entry,
-		for use in a Guestbook app. '''
+  ''' Applies the :py:class:`model.adapter.RedisAdapter` so that
+      model subclasses are stored in ``Redis``. '''
 
-	name = basestring, {'required': True}
-	message = basestring, {'default': 'Hello, apptools! :)'}
-	created = datetime.datetime
+  __adapter__ = "RedisAdapter"
+
+
+## Signature - Request and response message that adds a new 'signature' the local ``guestbook``.
+class Signature(RedisModel):
+
+  ''' Request (and response) to 'sign' the local 'guestbook'. Includes
+      an email address, full name, and a short message. '''
+
+  name = basestring
+  email = basestring, {'required': True}
+  message = basestring, {'default': 'Hello, apptools!'}

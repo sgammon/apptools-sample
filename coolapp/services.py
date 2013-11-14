@@ -22,6 +22,9 @@ from datetime import datetime
 # apptools
 from apptools import rpc, model
 
+# app models
+from coolapp.models import Signature
+
 
 ## HelloMessage - Message for use in ``Hello.test``, containing a simple string.
 class HelloMessage(model.Model):
@@ -33,18 +36,6 @@ class HelloMessage(model.Model):
       Default value for ``message`` is ``Hello, world!``. '''
 
   message = basestring, {'default': 'Hello, world!'}
-
-
-## Signature - Request and response message that adds a new 'signature' the local ``guestbook``.
-class Signature(model.Model):
-
-  ''' Request (and response) to 'sign' the local 'guestbook'. Includes
-      an email address, full name, and a short message. '''
-
-  name = basestring
-  email = basestring, {'required': True}
-  message = basestring, {'default': 'Hello, apptools!'}
-  timestamp = datetime
 
 
 ## GuestbookList - Response containing a list of existing guestbook signatures.
@@ -156,10 +147,13 @@ class GuestbookService(rpc.Service):
       raise self.exceptions.user_exists("Woops! You've already signed the guestbook. Stop! geez")
     else:
 
-      signature = request
+      signature = Signature(**{
+        'email': request.email,
+        'name': request.name,
+        'message': request.message
+      })
 
       # everything's cool, store the signature
-      signature.timestamp = datetime.datetime.now()
       signature.put()
 
       return signature
@@ -182,5 +176,5 @@ class GuestbookService(rpc.Service):
 
     return GuestbookList(**{
       'count': len(guestbook),
-      'signatures': guestbook
+      'signatures': [signature.to_message() for signature in guestbook]
     })
