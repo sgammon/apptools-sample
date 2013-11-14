@@ -81,6 +81,11 @@
         {%- endif -%}
         {% endblock page_services %}
 
+        <!-- Core JS -->
+        <script src="//code.jquery.com/jquery.js" type="text/javascript"></script>
+        <script src="{{ asset.script('base', 'apptools') }}" type="text/javascript"></script>
+        <script src="{{ asset.script('main', 'bootstrap') }}" type="text/javascript"></script>
+
         {%- block pagestyles %}{% endblock pagestyles %}
     {%- endblock %}
 
@@ -95,11 +100,7 @@
 {% block presouth %}{% endblock presouth -%}
 {%- block south -%}
 
-<!-- Core JS -->
-<script src="//code.jquery.com/jquery.js" type="text/javascript"></script>
-<script src="{{ asset.script('base', 'apptools') }}" type="text/javascript"></script>
-<script src="{{ asset.script('main', 'bootstrap') }}" type="text/javascript"></script>
-
+<!-- Page JS -->
 <script type="text/javascript">
     $.apptools.rpc.state.config.jsonrpc = {
         base_uri: '/v1/rpc',

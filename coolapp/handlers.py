@@ -20,7 +20,7 @@
 from apptools import web
 
 # routing
-from coolapp import routing
+from coolapp import routing, models
 
 
 @routing.rule('/', name='landing')
@@ -32,4 +32,5 @@ class Landing(web.WebHandler):
 
         ''' HTTP GET '''
 
-        return self.render('landing.html')
+        # grab signatures for guestbook list and render
+        return self.render('landing.html', signatures=models.Signature.query().fetch() or [])

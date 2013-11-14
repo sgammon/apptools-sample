@@ -105,14 +105,7 @@ class GuestbookService(rpc.Service):
     ''' Raised when a user's 'email' is detected to be
         an invalid email address. '''
 
-  # AlreadySigned - raised when the same user tries to sign more than once.
-  class AlreadySigned(rpc.Error):
-
-    ''' Since a user's email is used as their key name, we
-        need to fail if they've already signed the guestbook. '''
-
   exceptions = rpc.Exceptions(**{
-    'user_exists': AlreadySigned,
     'invalid_email': InvalidEmail
   })
 
@@ -140,23 +133,16 @@ class GuestbookService(rpc.Service):
     if '@' not in request.email or '.' not in request.email:
       raise self.exceptions.invalid_email("Woops! That's not a valid email address, you silly goose.")
 
-    # check for an existing signature
-    user = model.Key(Signature, request.email)  # `Signature` key with `request.email` as the keyname
+    signature = Signature(**{
+      'email': request.email,
+      'name': request.name,
+      'message': request.message
+    })
 
-    if user.get():
-      raise self.exceptions.user_exists("Woops! You've already signed the guestbook. Stop! geez")
-    else:
+    # everything's cool, store the signature
+    signature.put()
 
-      signature = Signature(**{
-        'email': request.email,
-        'name': request.name,
-        'message': request.message
-      })
-
-      # everything's cool, store the signature
-      signature.put()
-
-      return signature
+    return signature
 
   @rpc.method(rpc.messages.VoidMessage, GuestbookList)
   def list(self, request):

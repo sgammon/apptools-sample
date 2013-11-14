@@ -1,5 +1,9 @@
 
 
 body {
-	background: #BADA55;
+	margin: 1em;
+}
+
+.hidden {
+	display: none;
 }

@@ -1,5 +1,180 @@
 {% extends "core/__base.html" %}
 
 {% block body %}
-	<b>hi apptools :)</b>
+	<!-- Form submit code -->
+	<script type="text/javascript">
+
+			// renders a single signature
+			function renderSignature(sig) {
+
+				source = "<li><b><a href='mailto:" + sig.email + "'>" + sig.name + "</a></b>";
+				source += "<br />" + sig.email + "<br />";
+				source += "<p>" + sig.message + "</p>";
+				return source;
+
+			};
+
+			// renders existing signatures
+			function renderGuestbook(response) {
+
+				wrapper = "<div id='guestbook'><ul id='siglist'>";
+
+				for (var i = 0; i < response.signatures.length; i++) {
+					wrapper += renderSignature(response.signatures[i]);
+				}
+
+				wrapper += "</ul></div>";
+				document.getElementById('guestbook_wrap').innerHTML = wrapper;
+
+			};
+
+			// shows a flashed message
+			function flash(id) {
+				document.getElementById(id).classList.remove('hidden');
+				setTimeout(function () {
+					document.getElementById(id).classList.add('hidden');
+				}, 2500);
+			}
+
+			// refreshes guestbook list
+			function refreshGuestbook(event) {
+
+				event.preventDefault();
+				event.stopPropagation();
+
+				$.apptools.api.guestbook.list().fulfill({
+
+					success: function (list) {
+						renderGuestbook(list);
+						flash('list_success');
+					},
+
+					failure: function (error) {
+
+						// show error
+						flash('list_failure');
+
+						// log a bunch
+						console.error('Failed to list guestbook signatures.');
+						console.error(error);
+
+					}
+
+				});
+
+			}
+
+			// submits a new signature
+			function submitSignature(event) {
+
+				var data = {  // collect form data
+						name: document.getElementById('name_field').value,
+						email: document.getElementById('email_field').value,
+						message: document.getElementById('message_field').value
+					};
+
+					// show pending text, log
+					console.log('Submitting form...', data);
+
+					// submit via `guestbook` service
+					$.apptools.api.guestbook.sign(data).fulfill({
+
+						success: function (signature) {
+
+							// add to local signatures and refresh
+							var newsig = document.createElement('li');
+								newsig.innerHTML = renderSignature(signature);
+								document.getElementById('siglist').appendChild(newsig);
+
+								// close modal
+								$('#signModal').modal('hide');
+
+								// show success message
+								flash('sign_success');
+
+						},
+
+						failure: function (error) {
+
+							// show failure message
+							flash('sign_failure');
+
+							// log a bunch
+							console.error('Failed to sign guestbook.');
+							console.error(error);
+
+						}
+
+					});
+
+		}
+
+	</script>
+
+	<!-- Alert messages -->
+	<div id='sign_success' class="alert alert-success hidden">You signed the guestbook :)</div>
+	<div id='sign_failure' class="alert alert-danger hidden">Oh noez! Couldn't sign the guestbook</div>
+	<div id='list_success' class="alert alert-success hidden">Yay! Refreshed the guestbook :)</div>
+	<div id='list_failure' class="alert alert-danger hidden">Oh noez! Couldn't refresh the guestbook</div>
+
+	<!-- Button trigger modal -->
+	<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#signModal">
+	  Sign the guestbook
+	</button>
+	<button class="btn btn-info btn-lg" data-toggle="modal" onclick="refreshGuestbook(event);">
+	  Refresh signatures
+	</button>
+
+	<!-- Sign modal -->
+	<div class="modal fade" id="signModal" tabindex="-1" role="dialog" aria-labelledby="Sign Guestbook" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	        <h4 class="modal-title">Sign the guestbook</h4>
+	      </div>
+	      <div class="modal-body">
+	        <div class="input-group">
+			  <span class="input-group-addon">NAME:</span>
+			  <input id='name_field' type="text" class="form-control" placeholder="Full name">
+			</div>
+			<div class="input-group">
+			  <span class="input-group-addon">EMAIL:</span>
+			  <input id='email_field' type="text" class="form-control" placeholder="Email address">
+			</div>
+			<div class="input-group">
+			  <span class="input-group-addon">MESSAGE:</span>
+			  <textarea id='message_field' type="text" class="form-control" placeholder="Message"></textarea>
+			</div>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <button type="button" class="btn btn-primary" onclick="submitSignature(event);">Sign! :)</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+	<!-- Guestbook list -->
+	<br />
+	<h2>Guestbook signatures</h2>
+	<div id='guestbook_wrap'>
+		{% if signatures %}
+		<div id="guestbook">
+			<ul id='siglist'>
+			{% for sig in signatures %}
+				<li>
+					<b><a href="mailto:{{ sig.email }}">{{ sig.name }}</a></b>
+					<br />{{ sig.email }}<br />
+					<p>
+						{{ sig.message }}
+					</p>
+				</li>
+			{% endfor %}
+			</ul>
+		</div>
+		{% else %}
+			<b>no signatures yet! :(</b>
+		{% endif %}
+	</div>
 {% endblock body %}
