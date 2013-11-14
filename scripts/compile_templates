@@ -37,7 +37,7 @@ for path in _extra_paths:
 	print "Adding path '%s' to sys.path..." % path
 	sys.path.insert(0, path)
 
-import bootstrap
+#import bootstrap
 import re, json
 from os import path, listdir, mkdir
 
@@ -126,11 +126,11 @@ if __name__ == '__main__':
     join = os.path.join
     base = os.path.dirname(os.path.abspath(os.path.realpath(__file__))) ## tools/bin
     base = os.path.dirname(base) ## tools/
-    base = os.path.dirname(base) ## /
+    #base = os.path.dirname(base) ## /
  
-    module = base+'/app/fatcatmap/templates'
-    sourcepath = base+'/app/fatcatmap/templates/source'
-    targetpath = base+'/app/fatcatmap/templates/compiled'
+    module = base+'/coolapp/templates'
+    sourcepath = base+'/coolapp/templates/source'
+    targetpath = base+'/coolapp/templates/compiled'
 
     print "this is compiling all templates from: "+base+"/coolapp/templates/source\n"
     print "to python code, packaged as modules in: "+base+"/coolapp/templates/compiled\n"

@@ -15,3 +15,48 @@
               license and explicitly means acceptance to these terms.
 
 '''
+
+from apptools import rpc
+from apptools import model
+
+from protorpc import remote
+
+
+class HelloMessage(model.Model):
+
+  '''  '''
+
+  message = basestring, {'default': 'Hello, world!'}
+
+
+class HelloException(remote.ApplicationError):
+
+  '''  '''
+
+  pass
+
+
+@rpc.service
+class HelloService(rpc.Service):
+
+  ''' '''
+
+  name = 'test'
+
+  exceptions = rpc.Exceptions(**{
+      'generic': HelloException
+  })
+
+  @rpc.method(HelloMessage)
+  def hello(self, request):
+
+    '''  '''
+
+    if 'oops' in request.message:
+      raise self.exceptions.generic("can't say oops")
+
+    return HelloMessage(message=request.message)
+
+
+
+

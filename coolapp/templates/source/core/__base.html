@@ -46,7 +46,10 @@
         {% block prenorth -%}{%- endblock -%}
         {% block stylesheets %}
         <!-- Stylesheets -->
+        <link rel='stylesheet' href="{{ asset.style('main', 'bootstrap') }}" />
         <link rel='stylesheet' href="{{ asset.style('app', 'static') }}" />
+
+
         {% endblock stylesheets -%}
         {%- block postnorth -%}{% endblock %}
         {%- if not page.mobile %}
@@ -91,6 +94,9 @@
 {% block presouth %}{% endblock presouth -%}
 {%- block south -%}
 <!-- Deferred JS -->
+<script src="//code.jquery.com/jquery.js" type="text/javascript"></script>
+<script src="{{ asset.script('base', 'apptools') }}" type="text/javascript"></script>
+<script src="{{ asset.script('main', 'bootstrap') }}" type="text/javascript"></script>
 <div id='js-deferred' class='hidden resource'></div><!-- end #js-deferred -->
 {%- endblock south -%}
 

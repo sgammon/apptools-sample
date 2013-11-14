@@ -49,33 +49,26 @@ _config['apptools.project.assets'] = {
 
         },
 
+        ### Bootstrap SASS ###
+        ('bootstrap', 'bootstrap'): {
+
+            'config': _std_config,
+
+            'assets': {
+                'main': {'name': 'bootstrap', 'min': True, 'version': 'v3'}
+            }
+
+        },
+
         ### apptools ###
         ('apptools', 'apptools'): {
 
             'config': _std_config,
 
             'assets': {
+                'base': {'min': True, 'version': 'v1'}
             }
 
-        },
-
-        ### platform (compiled) ###
-        ('platform', 'catnip'): {
-
-            'config': _std_config,
-
-            'assets': {
-            }
-
-        },
-
-        ### compiled JS templates ###
-        ('templates'): {
-
-            'config': _std_config,
-
-            'assets': {
-            }
         }
 
     },
@@ -95,12 +88,13 @@ _config['apptools.project.assets'] = {
 
         },
 
-        # Compiled (SASS) FCM Stylesheets
-        ('compiled', 'compiled'): {
+        # Bootstrap
+        ('bootstrap', 'bootstrap'): {
 
             'config': _std_config,
 
             'assets': {
+                'main': {'name': 'bootstrap', 'min': True, 'version': 'v3'}
             }
 
         }
