@@ -7,3 +7,4 @@ webob
 slimmer
 requests
 pycrypto
+redis
