@@ -41,7 +41,7 @@ info = {
     "url": "https://github.com/keenlabs/apptools-sample",
     "packages": ["coolapp", "coolapp_tests"],
     "install_requires": requirements,
-    "tests_require": ["gevent", "nose"]
+    "tests_require": ["nose"]
 }
 
 

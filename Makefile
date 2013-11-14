@@ -102,7 +102,7 @@ lib: .env
 	@brew install libev
 
 	@echo "Installing development dependencies..."
-	@bin/pip install cython "git+git://github.com/surfly/gevent.git#egg=gevent"
+	#@bin/pip install cython "git+git://github.com/surfly/gevent.git#egg=gevent"
 	@bin/pip install -r ./requirements.txt
 
 .env:
