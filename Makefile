@@ -99,7 +99,8 @@ lib: .env
 ### === defs === ###
 .develop: bin lib config.rb .env
 	@echo "Installing brew dependencies..."
-	@brew install libev
+	@+brew install libev
+	@+brew install redis
 
 	@echo "Installing development dependencies..."
 	#@bin/pip install cython "git+git://github.com/surfly/gevent.git#egg=gevent"
