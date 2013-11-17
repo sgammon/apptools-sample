@@ -39,7 +39,8 @@ from apptools.rpc import mappers
 from apptools.rpc import dispatch as rpc
 
 try:
-  from gevent import pywsgi
+  from gevent import pool
+  from gevent import wsgi
   from gevent import monkey
 
 except ImportError:
@@ -63,12 +64,21 @@ else:
 
     ''' Shim to run with a gevent-based PyWSGI server. '''
 
-    return pywsgi.WSGIServer((interface, port), *args, **kwargs)
+    return wsgi.WSGIServer((interface, port), *args, spawn=pool.Pool(1000), **kwargs)
+
+
+# Globals
+static_cache = {}
+ENABLE_CACHE = True
 
 
 def devserver(environ, start_response):
 
   '''  '''
+
+  global static_cache
+
+  environ['SERVER_ENVIRONMENT'] = "Development/1.0"
 
   if not environ.get('PATH_INFO', '/').startswith('/assets'):
 
@@ -82,35 +92,43 @@ def devserver(environ, start_response):
     filepath = '/'.join(filter(lambda x: x != '', (environ['PATH_INFO'].split('?')[0] if '?' in environ['PATH_INFO'] else environ['PATH_INFO']).split('/')))
 
     try:
-      with open(os.path.abspath(os.path.join(os.path.dirname(__file__), filepath)), 'r') as asset_handle:
-        contents = asset_handle.read()
+      filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), filepath))
 
-        mimetype = {
+      if ENABLE_CACHE and (filepath in static_cache):
+        mimetype, contents = static_cache[filepath]
 
-          # mapped content types
-          'css': 'text/css',
-          'js': 'application/javascript',
-          'svg': 'image/svg+xml',
-          'png': 'image/png',
-          'gif': 'image/gif',
-          'jpeg': 'image/jpeg',
-          'jpg': 'image/jpg',
-          'webp': 'image/webp',
-          'manifest': 'text/cache-manifest',
-          'txt': 'text/plain',
-          'html': 'text/html',
-          'xml': 'text/xml',
-          'json': 'application/json'
+      else:
+        with open(filepath, 'r') as asset_handle:
+          contents = asset_handle.read()
 
-        }.get(filepath.split('.')[-1], 'application/octet-stream')
+          mimetype = {
 
-        start_response('200 OK', [
+            # mapped content types
+            'css': 'text/css',
+            'js': 'application/javascript',
+            'svg': 'image/svg+xml',
+            'png': 'image/png',
+            'gif': 'image/gif',
+            'jpeg': 'image/jpeg',
+            'jpg': 'image/jpg',
+            'webp': 'image/webp',
+            'manifest': 'text/cache-manifest',
+            'txt': 'text/plain',
+            'html': 'text/html',
+            'xml': 'text/xml',
+            'json': 'application/json'
 
-          ('Content-Type', mimetype)
+          }.get(filepath.split('.')[-1], 'application/octet-stream')
 
-        ])
+        # set in local cache
+        if ENABLE_CACHE:
+          static_cache[filepath] = mimetype, contents
 
-        return contents
+      start_response('200 OK', [
+        ('Content-Type', mimetype)
+      ])
+
+      return iter([contents])
 
     except IOError as e:
       
@@ -126,8 +144,7 @@ def devserver(environ, start_response):
 
       start_response('%s %s' % (status, message), [('Content-Type', 'text/plain')])
 
-
-      return '''
+      return iter(['''
 
         <!doctype html>
         <html>
@@ -150,8 +167,7 @@ def devserver(environ, start_response):
           </body>
         </html>
 
-      ''' % (status, message, pprint.pprint(environ), pprint.pprint(e))
-
+      ''' % (status, message, pprint.pprint(environ), pprint.pprint(e))])
 
 
 def run(args):

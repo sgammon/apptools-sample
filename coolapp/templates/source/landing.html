@@ -73,6 +73,9 @@
 						message: document.getElementById('message_field').value
 					};
 
+					event.preventDefault();
+					event.stopPropagation();
+
 					// show pending text, log
 					console.log('Submitting form...', data);
 
@@ -83,7 +86,13 @@
 
 							// add to local signatures and refresh
 							var newsig = document.createElement('li');
-								newsig.innerHTML = renderSignature(signature);
+								newsig.innerHTML = renderSignature(signature),
+								nosigs_text = document.getElementById('nosigs');
+
+								if (nosigs) {
+									nosigs.parentElement.removeChild(nosigs);
+								}
+
 								document.getElementById('siglist').appendChild(newsig);
 
 								// close modal
@@ -127,32 +136,35 @@
 
 	<!-- Sign modal -->
 	<div class="modal fade" id="signModal" tabindex="-1" role="dialog" aria-labelledby="Sign Guestbook" aria-hidden="true">
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	        <h4 class="modal-title">Sign the guestbook</h4>
-	      </div>
-	      <div class="modal-body">
-	        <div class="input-group">
-			  <span class="input-group-addon">NAME:</span>
-			  <input id='name_field' type="text" class="form-control" placeholder="Full name">
-			</div>
-			<div class="input-group">
-			  <span class="input-group-addon">EMAIL:</span>
-			  <input id='email_field' type="text" class="form-control" placeholder="Email address">
-			</div>
-			<div class="input-group">
-			  <span class="input-group-addon">MESSAGE:</span>
-			  <textarea id='message_field' type="text" class="form-control" placeholder="Message"></textarea>
-			</div>
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	        <button type="button" class="btn btn-primary" onclick="submitSignature(event);">Sign! :)</button>
-	      </div>
-	    </div><!-- /.modal-content -->
-	  </div><!-- /.modal-dialog -->
+
+	  <form onsubmit="submitSignature(event);">
+	  	<div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		        <h4 class="modal-title">Sign the guestbook</h4>
+		      </div>
+		      <div class="modal-body">
+		        <div class="input-group">
+				  <span class="input-group-addon">NAME:</span>
+				  <input id='name_field' type="text" class="form-control" placeholder="Full name">
+				</div>
+				<div class="input-group">
+				  <span class="input-group-addon">EMAIL:</span>
+				  <input id='email_field' type="text" class="form-control" placeholder="Email address">
+				</div>
+				<div class="input-group">
+				  <span class="input-group-addon">MESSAGE:</span>
+				  <textarea id='message_field' type="text" class="form-control" placeholder="Message"></textarea>
+				</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        <button type="button" class="btn btn-primary" onclick="submitSignature(event);">Sign! :)</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+	  </form> <!-- end form -->
 	</div><!-- /.modal -->
 
 	<!-- Guestbook list -->
@@ -174,7 +186,8 @@
 			</ul>
 		</div>
 		{% else %}
-			<b>no signatures yet! :(</b>
+			<b id='nosigs'>no signatures yet :(</b>
+			<ul id='siglist'></ul>
 		{% endif %}
 	</div>
 {% endblock body %}

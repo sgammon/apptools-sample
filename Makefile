@@ -99,11 +99,11 @@ lib: .env
 ### === defs === ###
 .develop: bin lib config.rb .env
 	@echo "Installing brew dependencies..."
-	@+brew install libev
-	@+brew install redis
+	@-brew install libev
+	@-brew install redis
 
 	@echo "Installing development dependencies..."
-	#@bin/pip install cython "git+git://github.com/surfly/gevent.git#egg=gevent"
+	@-bin/pip install cython "git+git://github.com/surfly/gevent.git#egg=gevent"
 	@bin/pip install -r ./requirements.txt
 
 .env:
@@ -128,18 +128,13 @@ config.rb:
 	@gem install compass --install-dir ./.Gems
 
 	@echo "Configuring Compass..."
-	#@compass init -x sass --prepare --environment development --relative-assets \
-	#					--sass-dir=$(PWD)/assets/style/source \
-	#					--css-dir=$(PWD)/assets/style/static/compiled \
-	#					--images-dir=$(PWD)/assets/img/static \
-	#					--javascripts-dir=$(PWD)/assets/js/static \
-	#					--fonts-dir=$(PWD)/assets/ext/static/fonts ./;
+	@-compass init -x sass --prepare --environment development --relative-assets --sass-dir assets/style/source --css-dir assets/style/static/compiled --images-dir assets/img/static --javascripts-dir assets/js/static --fonts-dir assets/ext/static/fonts
 
 	@echo "Symlinking Compass binaries..."
-	#@ln -s $(PWD)/.Gems/bin/compass $(PWD)/bin/compass
-	#@ln -s $(PWD)/.Gems/bin/sass $(PWD)/bin/sass
-	#@ln -s $(PWD)/.Gems/bin/scss $(PWD)/bin/scss
-	#@ln -s $(PWD)/.Gems/bin/sass-convert $(PWD)/bin/sass-convert
+	@ln -s $(PWD)/.Gems/bin/compass $(PWD)/bin/compass
+	@ln -s $(PWD)/.Gems/bin/sass $(PWD)/bin/sass
+	@ln -s $(PWD)/.Gems/bin/scss $(PWD)/bin/scss
+	@ln -s $(PWD)/.Gems/bin/sass-convert $(PWD)/bin/sass-convert
 
 	@echo "Cleaning junk..."
 	@rm -fr ./stylesheets ./sass
