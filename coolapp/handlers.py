@@ -23,7 +23,7 @@ from apptools import web
 from coolapp import routing, models
 
 
-@routing.rule('/', name='landing')
+@web.rule('/', name='landing')
 class Landing(web.WebHandler):
 
     ''' apptools-sample landing handler. '''

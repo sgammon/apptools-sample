@@ -23,20 +23,13 @@ import datetime
 from apptools import model
 
 
-## RedisModel - Simply applies the Redis adapter.
-class RedisModel(model.Model):
-
-  ''' Applies the :py:class:`model.adapter.RedisAdapter` so that
-      model subclasses are stored in ``Redis``. '''
-
-  __adapter__ = "RedisAdapter"
-
-
 ## Signature - Request and response message that adds a new 'signature' the local ``guestbook``.
-class Signature(RedisModel):
+class Signature(model.Model):
 
   ''' Request (and response) to 'sign' the local 'guestbook'. Includes
       an email address, full name, and a short message. '''
+
+  __adapter__ = "RedisAdapter"  # store signatures in redis plz
 
   name = basestring
   email = basestring, {'required': True}

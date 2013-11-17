@@ -56,11 +56,13 @@ class HelloService(rpc.Service):
       Contains only one method, :py:meth:`hello`,
       that takes and returns a :py:class:`HelloMessage`. '''
 
+
   # HelloException - `rpc.Error` subclass for testing service errors.
   class HelloException(rpc.Error):
 
     ''' Sample :py:class:`rpc.Error`-style exception
         class, for use with :py:class:`HelloService`.  '''
+
 
   exceptions = rpc.Exceptions(**{
       'generic': HelloException
@@ -99,11 +101,13 @@ class GuestbookService(rpc.Service):
       their name and email address, along with a short message
       that defaults to "Hello, apptools!". '''
 
+
   # InvalidEmail - raised when an invalid email address is encountered.
   class InvalidEmail(rpc.Error):
 
     ''' Raised when a user's 'email' is detected to be
         an invalid email address. '''
+
 
   exceptions = rpc.Exceptions(**{
     'invalid_email': InvalidEmail
