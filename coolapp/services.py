@@ -155,7 +155,6 @@ class GuestbookService(rpc.Service):
         guestbook signatures. '''
 
     return GuestbookList(**{
-      'count': len(guestbook),
+      'count': len(self.guestbook.list()),
       'signatures': [signature.to_message() for signature in self.guestbook.list()]
     })
-    
