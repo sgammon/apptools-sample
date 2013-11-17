@@ -23,14 +23,29 @@ from apptools import web
 from coolapp import routing, models
 
 
-@web.rule('/', name='landing')
+@routing.rule('/', name='landing')
 class Landing(web.WebHandler):
 
-    ''' apptools-sample landing handler. '''
+  ''' apptools-sample landing handler. '''
 
-    def get(self):
+  def get(self):
 
-        ''' HTTP GET '''
+    ''' HTTP GET '''
 
-        # grab signatures for guestbook list and render
-        return self.render('landing.html', signatures=models.Signature.query().fetch() or [])
+    # grab signatures for guestbook list and render
+    return self.render('landing.html', signatures=self.guestbook.list(), **self.request.GET)
+
+  def post(self):
+
+    ''' HTTP POST '''
+
+    # sign the guestbook
+    try:
+      signature = self.guestbook.sign(**self.request.POST)
+
+    except (ValueError, KeyError):
+      return self.redirect_to('landing', status='error', error='invalid_email')
+
+    else:
+      return self.redirect_to('landing', status='success')
+      

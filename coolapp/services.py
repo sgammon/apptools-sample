@@ -56,13 +56,11 @@ class HelloService(rpc.Service):
       Contains only one method, :py:meth:`hello`,
       that takes and returns a :py:class:`HelloMessage`. '''
 
-
   # HelloException - `rpc.Error` subclass for testing service errors.
   class HelloException(rpc.Error):
 
     ''' Sample :py:class:`rpc.Error`-style exception
         class, for use with :py:class:`HelloService`.  '''
-
 
   exceptions = rpc.Exceptions(**{
       'generic': HelloException
@@ -101,13 +99,11 @@ class GuestbookService(rpc.Service):
       their name and email address, along with a short message
       that defaults to "Hello, apptools!". '''
 
-
   # InvalidEmail - raised when an invalid email address is encountered.
   class InvalidEmail(rpc.Error):
 
     ''' Raised when a user's 'email' is detected to be
         an invalid email address. '''
-
 
   exceptions = rpc.Exceptions(**{
     'invalid_email': InvalidEmail
@@ -133,18 +129,15 @@ class GuestbookService(rpc.Service):
         :returns: Same :py:class:`Signature` message, with
         a filled-in key and timestamp. '''
 
-    # barely validate the email address
-    if '@' not in request.email or '.' not in request.email:
+    try:
+      signature = self.guestbook.sign(**{
+        'email': request.email,
+        'name': request.name,
+        'message': request.message
+      })
+
+    except (ValueError, KeyError):
       raise self.exceptions.invalid_email("Woops! That's not a valid email address, you silly goose.")
-
-    signature = Signature(**{
-      'email': request.email,
-      'name': request.name,
-      'message': request.message
-    })
-
-    # everything's cool, store the signature
-    signature.put()
 
     return signature
 
@@ -161,10 +154,8 @@ class GuestbookService(rpc.Service):
         :returns: :py:class:`GuestbookList` describing existing
         guestbook signatures. '''
 
-    # grab up to 50 signatures
-    guestbook = Signature.query().fetch()
-
     return GuestbookList(**{
       'count': len(guestbook),
-      'signatures': [signature.to_message() for signature in guestbook]
+      'signatures': [signature.to_message() for signature in self.guestbook.list()]
     })
+    
