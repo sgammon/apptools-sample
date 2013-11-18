@@ -33,7 +33,9 @@ _config['devserver'] = {
     
     'caching': {
       'enabled': True,
-      'serve304': False
+      'serve304': True,
+      'timeout': 500,  # defaults to 5 minutes
+      'mode': 'public'  # defaults to `public`
     },
 
     'source': [

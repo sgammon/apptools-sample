@@ -17,15 +17,20 @@ __doc__ = '''
 
 '''
 
+
 __version__ = (1, 0)
 __author__ = "Sam Gammon <sam@keen.io>"
 
 
+# coolapp
+from coolapp import config
+
 # apptools util
-from apptools.util.cli import Tool
+from apptools.util import cli
+from apptools.util import devserver
 
 
-class Web(Tool):
+class Web(cli.Tool):
 
   ''' Minimal toolchain for managing and developing an
       apptools-based web application. '''
@@ -33,29 +38,51 @@ class Web(Tool):
   arguments = (
     ('--debug', '-d', {'action': 'store_true', 'help': 'run in debug mode'}),
     ('--quiet', '-q', {'action': 'store_true', 'help': 'suppress most output'}),
-    ('--verbose', '-v', {'action': 'count', 'help': 'output a lot of info'}),
+    ('--verbose', '-v', {'action': 'count', 'help': 'output a lot of useful info'}),
     ('--version', '-V', {'action': 'version', 'help': 'print version and exit', 'version': 'webtool %s' % '.'.join(map(unicode, __version__))})
   )
 
   ## == Bound Commands == ##
-  class Run(Tool):
+  class Run(cli.Tool):
 
     ''' Runs the local devserver. '''
 
     arguments = (
       ('--ip', '-i', {'type': str, 'help': 'address to bind to'}),
       ('--port', '-p', {'type': int, 'help': 'port to bind to'}),
-      ('--cache', '-c', {'action': 'store_true', 'help': 'enable static caching'}),
+      ('--services_only', '-s', {'action': 'store_true', 'help': 'run services only'}),
       ('--nocache', '-nc', {'action': 'store_true', 'help': 'disable static caching (takes precedence)'})
     )
 
     def execute(arguments):
 
-      '''  '''
+      ''' Execute the ``web run`` tool, given a set of arguments packaged
+          as a :py:class:`argparse.Namespace`.
 
-      import pdb; pdb.set_trace()
+          :param arguments: Product of the ``parser.parse_args()`` call,
+          dispatched by ``apptools`` or manually.
 
-  class Test(Tool):
+          :returns: Python value ``True`` or ``False`` depending on the
+          result of the call. ``Falsy`` return values will be passed to
+          :py:meth:`sys.exit` and converted into Unix-style return codes. '''
+
+      # respect caching killswitch
+      if arguments.nocache:
+        if 'devserver' in config:
+          config['devserver']['debug'] = True
+        else:
+          config['devserver'] = {'debug': True}
+
+      # start the devserver yo
+      return devserver.devserver(**{
+        'root': os.path.dirname(os.path.dirname(__file__)),
+        'interface': arguments.ip,
+        'port': arguments.port,
+        'label': 'apptools-sample',
+        'services_only': arguments.services_only
+      })
+
+  class Test(cli.Tool):
 
     ''' Runs the local testsuite. '''
 
@@ -67,11 +94,20 @@ class Web(Tool):
 
     def execute(arguments):
 
-      '''  '''
+      ''' Execute the ``web test`` tool, given a set of arguments
+          packaged as a :py:class:`argparse.Namespace`.
+
+          :param arguments: Product of the ``parser.parse_args()``
+          call, dispatched by ``apptools`` or manually.
+
+          :returns: Python value ``True`` or ``False`` depending on
+          the result of the call. ``Falsy`` return values will be
+          passed to :py:meth:`sys.exit` and converted into Unix-style
+          return codes. '''
 
       import pdb; pdb.set_trace()
 
-  class Build(Tool):
+  class Build(cli.Tool):
 
     ''' Builds local sources. '''
 
@@ -86,11 +122,20 @@ class Web(Tool):
 
     def execute(arguments):
 
-      '''  '''
+      ''' Execute the ``web build`` tool, given a set of arguments
+          packaged as a :py:class:`argparse.Namespace`.
+
+          :param arguments: Product of the ``parser.parse_args()``
+          call, dispatched by ``apptools`` or manually.
+
+          :returns: Python value ``True`` or ``False`` depending on
+          the result of the call. ``Falsy`` return values will be
+          passed to :py:meth:`sys.exit` and converted into Unix-style
+          return codes. '''
 
       import pdb; pdb.set_trace()
 
-  class Deploy(Tool):
+  class Deploy(cli.Tool):
 
     ''' Deploys code to prod/staging. '''
 
@@ -103,15 +148,18 @@ class Web(Tool):
 
     def execute(arguments):
 
-      '''  '''
+      ''' Execute the ``web deploy`` tool, given a set of arguments
+          packaged as a :py:class:`argparse.Namespace`.
+
+          :param arguments: Product of the ``parser.parse_args()``
+          call, dispatched by ``apptools`` or manually.
+
+          :returns: Python value ``True`` or ``False`` depending on
+          the result of the call. ``Falsy`` return values will be
+          passed to :py:meth:`sys.exit` and converted into Unix-style
+          return codes. '''
 
       import pdb; pdb.set_trace()
-
-  def execute(arguments):
-
-    '''  '''
-
-    import pdb; pdb.set_trace()
 
 
 Web(autorun=True)  # initialize and run :)
