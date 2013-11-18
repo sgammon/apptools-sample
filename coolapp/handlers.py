@@ -34,3 +34,4 @@ class Landing(web.WebHandler):
 
         # grab signatures for guestbook list and render
         return self.render('landing.html', signatures=models.Signature.query().fetch() or [])
+      
