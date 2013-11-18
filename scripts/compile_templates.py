@@ -33,9 +33,8 @@ _extra_paths = [
 	'coolapp/lib'
 ]
 
-for path in _extra_paths:
-	print "Adding path '%s' to sys.path..." % path
-	sys.path.insert(0, path)
+for path in filter(lambda x: x not in sys.path, _extra_paths):
+    sys.path.insert(0, path)
 
 #import bootstrap
 import re, json
@@ -119,27 +118,25 @@ def compile_dir(env, src_path, dst_path, pattern=r'^.*\.(html|js)$',
                 base_dir=base_dir, as_module=as_module)
 
 
-if __name__ == '__main__':
+def run(module=None, sources=None, target=None):
 
     import os
 
-    join = os.path.join
-    base = os.path.dirname(os.path.abspath(os.path.realpath(__file__))) ## tools/bin
-    base = os.path.dirname(base) ## tools/
-    #base = os.path.dirname(base) ## /
- 
-    module = base+'/coolapp/templates'
-    sourcepath = base+'/coolapp/templates/source'
-    targetpath = base+'/coolapp/templates/compiled'
+    if not module or not sources or not target:
+        join = os.path.join
+        base = os.path.dirname(os.path.abspath(os.path.realpath(__file__))) ## tools/bin
+        base = os.path.dirname(base) ## tools/
+        #base = os.path.dirname(base) ## /
 
-    print "this is compiling all templates from: "+base+"/coolapp/templates/source\n"
-    print "to python code, packaged as modules in: "+base+"/coolapp/templates/compiled\n"
-    print "with a root templates module of: "+base+"/coolapp/templates\n"
+        module = base+'/coolapp/templates'
+        sources = base+'/coolapp/templates/source'
+        target = base+'/coolapp/templates/compiled'
 
     env = Environment(extensions=[with_, autoescape, do, loopcontrols], optimized=True)  #, content])
     env.filters['json'] = json.dumps
-    compile_dir(env, sourcepath, targetpath, base_dir=module, as_module=True)
+    compile_dir(env, sources, target, base_dir=module, as_module=True)
     
-    print '\n..... finished :)\n'
-    
-    exit(0)
+    return 0
+
+if __name__ == "__main__":
+    exit(run())

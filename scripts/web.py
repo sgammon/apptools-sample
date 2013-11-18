@@ -41,11 +41,20 @@ from coolapp.config import *
 from coolapp.routing import *
 from coolapp.handlers import *
 from coolapp.services import *
-from coolapp.templates import *
+
+try:
+  from coolapp.templates import *
+except AttributeError:
+  pass
 
 # apptools util
 from apptools.util import cli
+from apptools.util import debug
 from apptools.util import devserver
+
+
+## Globals
+logging = debug.AppToolsLogger(name='web')
 
 
 class Web(cli.Tool):
@@ -131,12 +140,13 @@ class Web(cli.Tool):
     ''' Builds local sources. '''
 
     arguments = (
-      ('--gzip', {'help': 'pre-gzip assets'}),
-      ('--sass', {'help': 'collect/compile SASS'}),
-      ('--scss', {'help': 'collect/compile SCSS'}),
-      ('--less', {'help': 'collect/compile LESS'}),
-      ('--coffee', {'help': 'collect/compile CoffeeScript'}),
-      ('--closure', {'help': 'preprocess JS with closure compiler'})
+      ('--gzip', {'action': 'store_true', 'help': 'pre-gzip assets'}),
+      ('--sass', {'action': 'store_true', 'help': 'collect/compile SASS'}),
+      ('--scss', {'action': 'store_true', 'help': 'collect/compile SCSS'}),
+      ('--less', {'action': 'store_true', 'help': 'collect/compile LESS'}),
+      ('--coffee', {'action': 'store_true', 'help': 'collect/compile CoffeeScript'}),
+      ('--closure', {'action': 'store_true', 'help': 'preprocess JS with closure compiler'}),
+      ('--templates', {'action': 'store_true', 'help': 'compile and optimize jinja2 templates'})
     )
 
     def execute(arguments):
@@ -152,7 +162,30 @@ class Web(cli.Tool):
           passed to :py:meth:`sys.exit` and converted into Unix-style
           return codes. '''
 
-      import pdb; pdb.set_trace()
+      if arguments.templates:
+
+        logging.info('Compiling app templates...')
+
+        from scripts import compile_templates
+
+        # delete existing templates first, if any
+        logging.info('Cleaning existing template path...')
+        module_root = os.path.join(project_root, "coolapp", "templates")
+
+        clean_command = "rm -fr %s" % os.path.join(module_root, "compiled", "*")
+        if config.get('debug', False):
+          logging.debug('Executing command: "%s".' % clean_command)
+        os.system(clean_command)
+
+        # run the template compiler
+        try:
+          result = compile_templates.run()
+        except:
+          logging.error('An exception was encountered while compiling templates.')
+          raise
+        else:
+          logging.info('Templates compiled successfully.')
+
 
   class Deploy(cli.Tool):
 

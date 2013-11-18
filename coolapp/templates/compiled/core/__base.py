@@ -25,6 +25,7 @@ def run(environment):
 
     def block_head(context, environment=environment):
         l_page = context.resolve('page')
+        l_asset = context.resolve('asset')
         if 0: yield None
         for event in context.blocks['meta'][0](context):
             yield event
@@ -51,6 +52,10 @@ def run(environment):
         yield u'\n        '
         for event in context.blocks['page_services'][0](context):
             yield event
+        yield u'\n\n        <!-- Core JS -->\n        <script src="//code.jquery.com/jquery.js" type="text/javascript"></script>\n        <script src="%s" type="text/javascript"></script>\n        <script src="%s" type="text/javascript"></script>' % (
+            context.call(environment.getattr(l_asset, 'script'), 'base', 'apptools'), 
+            context.call(environment.getattr(l_asset, 'script'), 'main', 'bootstrap'), 
+        )
         for event in context.blocks['pagestyles'][0](context):
             yield event
 
@@ -62,7 +67,7 @@ def run(environment):
         included_template = environment.get_template('macros/apptools.html', '/source/core/__base.html').module
         l_build_native_page_object = getattr(included_template, 'build_native_page_object', missing)
         if l_build_native_page_object is missing:
-            l_build_native_page_object = environment.undefined("the template %r (imported on line 78 in '/source/core/__base.html') does not export the requested name 'build_native_page_object'" % included_template.__name__, name='build_native_page_object')
+            l_build_native_page_object = environment.undefined("the template %r (imported on line 77 in '/source/core/__base.html') does not export the requested name 'build_native_page_object'" % included_template.__name__, name='build_native_page_object')
         yield u'\n            '
         yield to_string(context.call(l_build_native_page_object, l_page, l_transport, l_security))
 
@@ -86,7 +91,8 @@ def run(environment):
     def block_stylesheets(context, environment=environment):
         l_asset = context.resolve('asset')
         if 0: yield None
-        yield u'\n        <!-- Stylesheets -->\n        \n\n        <link rel=\'stylesheet\' href="%s" />\n\n\n        ' % (
+        yield u'\n        <!-- Stylesheets -->\n        <link rel=\'stylesheet\' href="%s" />\n        <link rel=\'stylesheet\' href="%s" />\n\n\n        ' % (
+            context.call(environment.getattr(l_asset, 'style'), 'main', 'bootstrap'), 
             context.call(environment.getattr(l_asset, 'style'), 'app', 'static'), 
         )
 
@@ -144,11 +150,11 @@ def run(environment):
             yield event
         for event in context.blocks['postsouth'][0](context):
             yield event
-        yield u'\n</body>\n</html>'
+        yield u'</body>\n</html>'
 
     def block_south(context, environment=environment):
         if 0: yield None
-        yield u'<!-- Deferred JS -->\n<script src="https://commondatastorage.googleapis.com/providence-clarity/static/base.min.js" type="text/javascript"></script>\n<div id=\'js-deferred\' class=\'hidden resource\'></div><!-- end #js-deferred -->'
+        yield u'<!-- Page JS -->\n<script type="text/javascript">\n    $.apptools.rpc.state.config.jsonrpc = {\n        base_uri: \'/v1/rpc\',\n        enabled: true,\n        host: window.location.protocol + \'//\' + window.location.host\n    };\n\n    console.log(\'Apptools sample is ready. :)\');\n</script>\n\n<!-- Deferred JS -->\n<div id=\'js-deferred\' class=\'hidden resource\'></div><!-- end #js-deferred -->'
 
     def block_meta_basic(context, environment=environment):
         l__meta = context.resolve('_meta')
@@ -176,5 +182,5 @@ def run(environment):
         if 0: yield None
 
     blocks = {'prenorth': block_prenorth, 'page_services': block_page_services, 'head': block_head, 'js_pageobject': block_js_pageobject, 'title': block_title, 'title_seperator': block_title_seperator, 'body': block_body, 'presouth': block_presouth, 'postsouth': block_postsouth, 'stylesheets': block_stylesheets, 'meta': block_meta, 'postnorth': block_postnorth, 'jspagedata': block_jspagedata, 'title_prefix': block_title_prefix, '_tpl_root': block__tpl_root, 'south': block_south, 'meta_basic': block_meta_basic, 'pagestyles': block_pagestyles}
-    debug_info = '2=10&46=13&73=16&74=19&77=22&9=26&11=29&35=32&46=39&47=41&55=43&56=45&73=52&85=54&77=57&78=62&79=67&35=69&91=77&95=80&102=83&47=86&51=90&11=93&16=97&18=102&55=105&92=108&35=112&2=116&3=120&6=126&9=129&90=132&91=136&92=138&95=141&96=143&102=145&96=149&18=153&20=159&21=160&22=161&23=162&24=163&25=164&26=165&27=166&28=167&29=169&85=175'
+    debug_info = '2=10&46=13&72=16&73=19&76=22&9=26&11=30&35=33&46=40&47=42&54=44&55=46&72=53&86=56&87=57&89=59&76=62&77=67&78=72&35=74&95=82&100=85&118=88&47=91&49=95&50=96&11=99&16=103&18=108&54=111&97=114&35=118&2=122&3=126&6=132&9=135&94=138&95=142&97=144&100=147&101=149&118=151&101=155&18=159&20=165&21=166&22=167&23=168&24=169&25=170&26=171&27=172&28=173&29=175&89=181'
     return locals()

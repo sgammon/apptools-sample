@@ -21,10 +21,18 @@
 _config = {}
 
 
+# Model API
+_config['apptools.model'] = {
+  
+  'debug': False  # debug messages
+
+}
+
+
 # Redis Adapter
 _config['apptools.model.adapters.redis.Redis'] = {
 
-    'debug': True,  # debug messages
+    'debug': False,  # debug messages
 
     'servers': {
 
@@ -40,7 +48,7 @@ _config['apptools.model.adapters.redis.Redis'] = {
 # Memcache Adapter
 _config['apptools.model.adapters.memcache.Memcache'] = {
 
-    'debug': True,  # debug messages
+    'debug': False,  # debug messages
 
     'servers': {
         'local': {'host': '127.0.0.1', 'port': 11211, 'unix': '/ns/runtime/sock/memcache.sock'}

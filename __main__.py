@@ -32,7 +32,11 @@ from coolapp import templates
 # import all the things
 from coolapp.handlers import *
 from coolapp.services import *
-from coolapp.templates import *
+
+try:
+  from coolapp.templates import *
+except ImportError:
+  pass
 
 # apptools!
 from apptools import dispatch
