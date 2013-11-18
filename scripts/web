@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''
+__doc__ = '''
 
     apptools sample: `web` development toolchain
 
@@ -17,12 +17,74 @@
 
 '''
 
-# stdlib
-import sys
+__version__ = (1, 0)
+__author__ = "Sam Gammon <sam@keen.io>"
 
-def __main__():
 
-	""" Sample dev script main function. """
+# apptools util
+from apptools.util.cli import Tool
 
-	print sys.argv
-	return 0
+
+class Web(Tool):
+
+  ''' Minimal toolchain for managing and developing an
+      apptools-based web application. '''
+
+  arguments = (
+    ('--debug', {'action': 'store_true', 'help': 'run in debug mode'}),
+    ('--quiet', {'action': 'store_true', 'help': 'suppress most output'}),
+    ('--verbose', {'action': 'store_true', 'help': 'output a lot of info'}),
+    ('--version', {'action': 'version', 'help': 'print version and exit', 'version': 'webtool %s' % '.'.join(map(unicode, __version__))})
+  )
+
+  ## == Bound Commands == ##
+  class Run(Tool):
+
+    ''' Runs the local devserver. '''
+
+    arguments = (
+      ('--ip', {'type': str, 'help': 'address to bind to'}),
+      ('--port', {'type': int, 'help': 'port to bind to'}),
+      ('--cache', {'action': 'store_true', 'help': 'enable static caching'}),
+      ('--nocache', {'action': 'store_true', 'help': 'disable static caching (takes precedence)'})
+    )
+
+  class Test(Tool):
+
+    ''' Runs the local testsuite. '''
+
+    arguments = (
+      ('--profile', {'action': 'store_true', 'help': 'profile while testing'}),
+      ('--coverage', {'action': 'store_true', 'help': 'collect coverage while testing'}),
+      ('--cover-tests', {'action': 'store_true', 'help': 'collect coverage for tests themselves'})
+    )
+
+  class Build(Tool):
+
+    ''' Builds local sources. '''
+
+    arguments = (
+      ('--gzip', {'help': 'pre-gzip assets'}),
+      ('--sass', {'help': 'collect/compile SASS'}),
+      ('--scss', {'help': 'collect/compile SCSS'}),
+      ('--less', {'help': 'collect/compile LESS'}),
+      ('--coffee', {'help': 'collect/compile CoffeeScript'}),
+      ('--closure', {'help': 'preprocess JS with closure compiler'})
+    )
+
+  class Deploy(Tool):
+
+    ''' Deploys code to prod/staging. '''
+
+    arguments = (
+      ('env', {'choices': ('sandbox', 'staging', 'production'), 'help': 'environment to deploy to'}),
+      ('dc', {'choices': ('dal', 'sj'), 'help': 'datacenter to deploy to (defaults to both)'}),
+      ('--assets', {'action': 'store_true', 'help': 'only deploy static assets'}),
+      ('--notest', {'action': 'store_true', 'help': 'don\'t run tests before deploying (DANGEROUS!)'})
+    )
+
+
+# initialize and run :)
+webtool = Web()
+args = webtool.parser.parse_args()
+__main__ = lambda: sys.exit(webtool(args))

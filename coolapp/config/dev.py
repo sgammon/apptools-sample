@@ -2,7 +2,7 @@
 
 '''
 
-    apptools-sample: templates
+    apptools-sample: config
 
     :author: Sam Gammon <sam@keen.io>
     :copyright: (c) Keen IO, 2013
@@ -16,4 +16,36 @@
 
 '''
 
-__all__ = ['compiled']
+
+_config = {}
+
+
+_config['devserver'] = {
+  
+  'debug': True,
+
+  'bind': {
+    'address': '127.0.0.1',
+    'port': 8080
+  },
+
+  'static': {
+    
+    'caching': {
+      'enabled': True,
+      'serve304': False
+    },
+
+    'source': [
+      'assets/js/source/*',
+      'assets/style/source/*'
+    ],
+
+    'compiled': [
+      'assets/js/static/*',
+      'assets/style/static/*'
+    ]
+  
+  }
+
+}

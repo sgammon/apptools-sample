@@ -28,14 +28,14 @@ rules, _VERSION_PREFIX = [], 'v1'
 
 def get_rules():
 
-    ''' URL routes. '''
+  ''' URL routes. '''
 
-    from apptools.util import global_rules as rules
+  from apptools.util import global_rules as rules
 
-    return [
+  return [
 
-        routes.HandlerPrefixRoute('coolapp.handlers.', [
-            # app-wide non-decorator routes go here
-        ])
+      routes.HandlerPrefixRoute('coolapp.handlers.', [
+          # app-wide non-decorator routes go here
+      ])
 
-    ] + rules
+  ] + rules

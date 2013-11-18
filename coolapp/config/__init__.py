@@ -59,7 +59,8 @@ _config['apptools.system'] = {
         ('assets', 'config.assets'),  # Asset manangement layer config
         ('output', 'config.output'),  # Output configuration
         ('services', 'config.services'),  # Global + site services (RPC/API) config
-        ('integration', 'config.integration')  # Library and 3rd-party config
+        ('integration', 'config.integration'),  # Library and 3rd-party config
+        ('dev', 'config.dev')  # Development environment settings
 
     ]
 

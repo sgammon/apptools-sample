@@ -18,12 +18,13 @@
 '''
 
 # stdlib
-import sys, os, inspect
+import sys, os, inspect, glob, re, gzip, time, datetime
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'coolapp'))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'coolapp/lib'))
 
 # coolapp!
+from coolapp import config
 from coolapp import handlers
 from coolapp import services
 from coolapp import templates
@@ -38,12 +39,17 @@ from apptools import dispatch
 from apptools.rpc import mappers
 from apptools.rpc import dispatch as rpc
 
+## apptools util!
+from apptools.util import debug
+
 try:
   from gevent import pool
   from gevent import wsgi
   from gevent import monkey
 
 except ImportError:
+
+  ENGINE = "wsgiref"
 
   ## stdlib wsgi server
   from wsgiref.simple_server import make_server
@@ -55,6 +61,8 @@ except ImportError:
     return make_server(interface, port, *args, **kwargs)
 
 else:
+
+  ENGINE = "gevent"
 
   ## monkey patch stdlib
   monkey.patch_all()
@@ -69,7 +77,9 @@ else:
 
 # Globals
 static_cache = {}
-ENABLE_CACHE = True
+config.debug = True  # we are running locally, it's always dev time
+dev_config = config.config.get('devserver', {'debug': True, 'bind': {'port': 8080}})
+logging = debug.AppToolsLogger(name='devserver')._setcondition(dev_config.get('debug'))
 
 
 def devserver(environ, start_response):
@@ -78,6 +88,8 @@ def devserver(environ, start_response):
 
   global static_cache
 
+  ## Environment stuff
+  environ['SERVER_SOFTWARE'] = "apptools/%s/dev" % ENGINE
   environ['SERVER_ENVIRONMENT'] = "Development/1.0"
 
   if not environ.get('PATH_INFO', '/').startswith('/assets'):
@@ -88,46 +100,79 @@ def devserver(environ, start_response):
 
   else:
 
+    # setup response headers and default response status
+    status, headers = '200 OK', [
+      ('Content-Type', mimetype)
+    ]
+
     # it's a static asset path
-    filepath = '/'.join(filter(lambda x: x != '', (environ['PATH_INFO'].split('?')[0] if '?' in environ['PATH_INFO'] else environ['PATH_INFO']).split('/')))
-
     try:
-      filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), filepath))
+      filepath = os.path.abspath(  # make absolute...
+        os.path.join(              # a joined path...
+          os.path.dirname(__file__), '/'.join(filter(lambda x: x != '', (  # of the current file's directory, plus...
+            # ... the path to the static file we want, potentially splitting out the query string ...
+            environ['PATH_INFO'].split('?')[0] if '?' in environ['PATH_INFO'] else environ['PATH_INFO']
+          ).split('/')))))
 
-      if ENABLE_CACHE and (filepath in static_cache):
-        mimetype, contents = static_cache[filepath]
+      # check the static cache if it's enabled
+      if config.get('static', {}).get('caching', {}).get('enabled', False) and (filepath in static_cache):
+        headers.append(('Cache-Control', 'private; max-age=500'))
+        mtime, mimetype, contents = static_cache[filepath]
 
-      else:
-        with open(filepath, 'r') as asset_handle:
-          contents = asset_handle.read()
+        # has file been modified on-disk?
+        if not int(os.path.getmtime(filepath)) > mtime:
 
-          mimetype = {
+          if 'HTTP_IF_MODIFIED_SINCE' in environ and config.get('static', {}).get('caching', {}).get('serve304', False):
 
-            # mapped content types
-            'css': 'text/css',
-            'js': 'application/javascript',
-            'svg': 'image/svg+xml',
-            'png': 'image/png',
-            'gif': 'image/gif',
-            'jpeg': 'image/jpeg',
-            'jpg': 'image/jpg',
-            'webp': 'image/webp',
-            'manifest': 'text/cache-manifest',
-            'txt': 'text/plain',
-            'html': 'text/html',
-            'xml': 'text/xml',
-            'json': 'application/json'
+            # check their copy
+            if_modified_date = int(time.mktime(datetime.datetime.strftime(environ['HTTP_IF_MODIFIED_SINCE'], "%a, %d %b %Y %H:%M:%S %Z").timetuple()))
 
-          }.get(filepath.split('.')[-1], 'application/octet-stream')
+            if if_modified_date >= mtime:
+              # cached and we can 304 :)
+              status = '304 Not Modified'
+              start_response(status, headers)
+              return iter([''])
 
-        # set in local cache
-        if ENABLE_CACHE:
-          static_cache[filepath] = mimetype, contents
+            else:
+              pass  # must re-send (static cache is up to date, browser's isn't)
 
-      start_response('200 OK', [
-        ('Content-Type', mimetype)
-      ])
+          else:
+            # cached but can't 304
+            start_response(status, headers)
+            return iter([contents])
 
+        else:
+          # it has been modified, invalidate cache
+          del static_cache[filepath]
+
+      # not cached / caching is off
+      with open(filepath, 'r') as asset_handle:
+        mtime, contents = int(os.path.getmtime(filepath)), asset_handle.read()
+
+        mimetype = {
+
+          # mapped content types
+          'css': 'text/css',
+          'js': 'application/javascript',
+          'svg': 'image/svg+xml',
+          'png': 'image/png',
+          'gif': 'image/gif',
+          'jpeg': 'image/jpeg',
+          'jpg': 'image/jpg',
+          'webp': 'image/webp',
+          'manifest': 'text/cache-manifest',
+          'txt': 'text/plain',
+          'html': 'text/html',
+          'xml': 'text/xml',
+          'json': 'application/json'
+
+        }.get(filepath.split('.')[-1], 'application/octet-stream')
+
+      # set in local cache
+      if config.get('static', {}).get('caching', {}).get('enabled', False):
+        static_cache[filepath] = mtime, mimetype, contents
+
+      start_response(status, headers)
       return iter([contents])
 
     except IOError as e:
