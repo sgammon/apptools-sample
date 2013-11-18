@@ -21,9 +21,27 @@ __doc__ = '''
 __version__ = (1, 0)
 __author__ = "Sam Gammon <sam@keen.io>"
 
+# stdlib
+import os, sys
+
+project_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+sys.path.insert(0, project_root)
+sys.path.insert(0, os.path.join(project_root, 'coolapp'))
+sys.path.insert(0, os.path.join(project_root, 'coolapp/lib'))
 
 # coolapp
 from coolapp import config
+from coolapp import routing
+from coolapp import handlers
+from coolapp import services
+from coolapp import templates
+
+# preload a bunch of app code
+from coolapp.config import *
+from coolapp.routing import *
+from coolapp.handlers import *
+from coolapp.services import *
+from coolapp.templates import *
 
 # apptools util
 from apptools.util import cli
@@ -76,10 +94,11 @@ class Web(cli.Tool):
       # start the devserver yo
       return devserver.devserver(**{
         'root': os.path.dirname(os.path.dirname(__file__)),
-        'interface': arguments.ip,
-        'port': arguments.port,
+        'interface': arguments.ip or '127.0.0.1',
+        'port': arguments.port or 8080,
         'label': 'apptools-sample',
-        'services_only': arguments.services_only
+        'services_only': arguments.services_only,
+        'cli': __name__ is '__main__'
       })
 
   class Test(cli.Tool):
