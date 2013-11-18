@@ -86,8 +86,8 @@ class Web(cli.Tool):
 
       # respect caching killswitch
       if arguments.nocache:
-        if 'devserver' in config:
-          config['devserver']['debug'] = True
+        if 'devserver' in config and 'static' in config['devserver'] and 'caching' in config['devserver']['static']:
+          config['devserver']['static']['caching']['enabled'] = False
         else:
           config['devserver'] = {'debug': True}
 
