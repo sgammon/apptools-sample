@@ -31,10 +31,10 @@ class Web(Tool):
       apptools-based web application. '''
 
   arguments = (
-    ('--debug', {'action': 'store_true', 'help': 'run in debug mode'}),
-    ('--quiet', {'action': 'store_true', 'help': 'suppress most output'}),
-    ('--verbose', {'action': 'store_true', 'help': 'output a lot of info'}),
-    ('--version', {'action': 'version', 'help': 'print version and exit', 'version': 'webtool %s' % '.'.join(map(unicode, __version__))})
+    ('--debug', '-d', {'action': 'store_true', 'help': 'run in debug mode'}),
+    ('--quiet', '-q', {'action': 'store_true', 'help': 'suppress most output'}),
+    ('--verbose', '-v', {'action': 'count', 'help': 'output a lot of info'}),
+    ('--version', '-V', {'action': 'version', 'help': 'print version and exit', 'version': 'webtool %s' % '.'.join(map(unicode, __version__))})
   )
 
   ## == Bound Commands == ##
@@ -43,11 +43,17 @@ class Web(Tool):
     ''' Runs the local devserver. '''
 
     arguments = (
-      ('--ip', {'type': str, 'help': 'address to bind to'}),
-      ('--port', {'type': int, 'help': 'port to bind to'}),
-      ('--cache', {'action': 'store_true', 'help': 'enable static caching'}),
-      ('--nocache', {'action': 'store_true', 'help': 'disable static caching (takes precedence)'})
+      ('--ip', '-i', {'type': str, 'help': 'address to bind to'}),
+      ('--port', '-p', {'type': int, 'help': 'port to bind to'}),
+      ('--cache', '-c', {'action': 'store_true', 'help': 'enable static caching'}),
+      ('--nocache', '-nc', {'action': 'store_true', 'help': 'disable static caching (takes precedence)'})
     )
+
+    def execute(arguments):
+
+      '''  '''
+
+      import pdb; pdb.set_trace()
 
   class Test(Tool):
 
@@ -58,6 +64,12 @@ class Web(Tool):
       ('--coverage', {'action': 'store_true', 'help': 'collect coverage while testing'}),
       ('--cover-tests', {'action': 'store_true', 'help': 'collect coverage for tests themselves'})
     )
+
+    def execute(arguments):
+
+      '''  '''
+
+      import pdb; pdb.set_trace()
 
   class Build(Tool):
 
@@ -72,6 +84,12 @@ class Web(Tool):
       ('--closure', {'help': 'preprocess JS with closure compiler'})
     )
 
+    def execute(arguments):
+
+      '''  '''
+
+      import pdb; pdb.set_trace()
+
   class Deploy(Tool):
 
     ''' Deploys code to prod/staging. '''
@@ -83,8 +101,17 @@ class Web(Tool):
       ('--notest', {'action': 'store_true', 'help': 'don\'t run tests before deploying (DANGEROUS!)'})
     )
 
+    def execute(arguments):
 
-# initialize and run :)
-webtool = Web()
-args = webtool.parser.parse_args()
-__main__ = lambda: sys.exit(webtool(args))
+      '''  '''
+
+      import pdb; pdb.set_trace()
+
+  def execute(arguments):
+
+    '''  '''
+
+    import pdb; pdb.set_trace()
+
+
+Web(autorun=True)  # initialize and run :)
