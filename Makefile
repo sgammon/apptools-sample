@@ -114,7 +114,7 @@ lib: .env
 	@echo "Symlinking toolchain..."
 	@ln -s $(PWD)/scripts/web.py $(PWD)/bin/web
 	@ln -s $(PWD)/scripts/compile_templates.py $(PWD)/bin/compile_templates
-	@chmod +x $(PWD)/scripts/web $(PWD)/bin/web
+	@chmod +x $(PWD)/scripts/web.py $(PWD)/bin/web
 	@echo "$(PWD)/coolapp/lib" > lib/python2.7/site-packages/coolapp-lib.pth
 	@echo "$(PWD)/coolapp" > lib/python2.7/site-packages/coolapp.pth
 	@echo "$(PWD)/.." > lib/python2.7/site-packages/apptools-sample.pth	
