@@ -105,6 +105,8 @@ lib: .env
 	@echo "Installing development dependencies..."
 	@-bin/pip install cython "git+git://github.com/surfly/gevent.git#egg=gevent"
 	@bin/pip install -r ./requirements.txt
+	@mkdir .develop
+	@chmod -R 775 .develop
 
 .env:
 	@echo "Initializing virtualenv..."
@@ -117,7 +119,7 @@ lib: .env
 	@chmod +x $(PWD)/scripts/web.py $(PWD)/bin/web
 	@echo "$(PWD)/coolapp/lib" > lib/python2.7/site-packages/coolapp-lib.pth
 	@echo "$(PWD)/coolapp" > lib/python2.7/site-packages/coolapp.pth
-	@echo "$(PWD)/.." > lib/python2.7/site-packages/apptools-sample.pth	
+	@echo "$(PWD)/.." > lib/python2.7/site-packages/apptools-sample.pth
 
 	@echo "Overriding standard Google paths..."
 	@echo "" > lib/python2.7/site-packages/protobuf-2.5.0-py2.7-nspkg.pth

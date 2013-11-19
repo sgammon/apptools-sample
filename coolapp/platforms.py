@@ -54,4 +54,3 @@ class Guestbook(platform.Platform):
     signature.put()
 
     return signature
-    

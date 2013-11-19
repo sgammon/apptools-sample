@@ -47,8 +47,6 @@ _config['apptools.system'] = {
     'config': { 'debug': False }, # configuration debug
 
     'hooks': {  # System-level Developer's Hooks
-        'appstats': {'enabled': False},  # AppStats RPC optimization + analysis tool
-        'apptrace': {'enabled': False},  # AppTrace memory usage optimization + analysis tool
         'callgraph': {'enabled': False},  # Use `pycallgraph` to generate an image callgraph of the WSGI app
         'profiler': {'enabled': False}   # Python profiler for CPU cycle/efficiency optimization + analysis
     },
