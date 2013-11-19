@@ -8,4 +8,3 @@ slimmer
 requests
 pycrypto
 redis
-watchdog
