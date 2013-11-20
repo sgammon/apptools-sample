@@ -16,4 +16,4 @@
 
 '''
 
-__all__ = ['config', 'models', 'services', 'handlers', 'routing']
+__all__ = ['config', 'platforms', 'models', 'services', 'handlers', 'routing']
