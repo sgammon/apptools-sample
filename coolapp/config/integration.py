@@ -33,7 +33,7 @@ _config['webapp2_extras.jinja2'] = {
 
     'template_path': 'coolapp/templates/source',  # Root directory for template storage
     'compiled_path': 'coolapp.templates.compiled',  # Compiled templates directory
-    'force_compiled': False,  # Force Jinja to use compiled templates, even on the Dev server
+    'force_compiled': True,  # Force Jinja to use compiled templates, even on the Dev server
 
     'environment_args': {  # Jinja constructor arguments
         'optimized': True,   # enable jinja2's builtin optimizer (recommended)
@@ -67,7 +67,7 @@ _config['webapp2_extras.sessions'] = {
 
 ## Google APIs
 _config['google.apis'] = {
-    
+
     'client_id': '',
     'client_secret': '',
     'user_agent': 'Apptools/1.0',

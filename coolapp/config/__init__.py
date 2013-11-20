@@ -68,11 +68,6 @@ _config['apptools.system'] = {
 _config['apptools.system.platform'] = {
 
     'installed_platforms': [
-
-        {'name': 'Generic WSGI', 'path': 'apptools.platform.generic.GenericWSGI'},
-        {'name': 'Layer9 AppFactory', 'path': 'apptools.platform.appfactory.AppFactory'},
-        {'name': 'Guestbook Platform', 'path': 'coolapp.platforms.Guestbook'}
-
     ]
 
 }

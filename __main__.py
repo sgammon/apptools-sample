@@ -27,11 +27,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'coolapp/lib'))
 from coolapp import config
 from coolapp import handlers
 from coolapp import services
+from coolapp import platforms
 from coolapp import templates
 
 # import all the things
 from coolapp.handlers import *
 from coolapp.services import *
+from coolapp.platforms import *
 
 try:
   from coolapp.templates import *

@@ -30,6 +30,7 @@ sys.path.insert(0, os.path.join(project_root, 'coolapp'))
 sys.path.insert(0, os.path.join(project_root, 'coolapp/lib'))
 
 # coolapp
+from coolapp import platforms
 from coolapp import config
 from coolapp import routing
 from coolapp import handlers
@@ -41,6 +42,7 @@ from coolapp.config import *
 from coolapp.routing import *
 from coolapp.handlers import *
 from coolapp.services import *
+from coolapp.platforms import *
 
 try:
   from coolapp.templates import *
@@ -79,7 +81,8 @@ class Web(cli.Tool):
       ('--port', '-p', {'type': int, 'help': 'port to bind to'}),
       ('--services_only', '-s', {'action': 'store_true', 'help': 'run services only'}),
       ('--nocache', '-nc', {'action': 'store_true', 'help': 'disable static caching (takes precedence)'}),
-      ('--profile', '-pr', {'action': 'store_true', 'help': 'attach a python profiler for each request/response'})
+      ('--profile', '-pr', {'action': 'store_true', 'help': 'attach a python profiler for each request/response'}),
+      ('--callgraph', '-cg', {'action': 'store_true', 'help': 'generate a callgraph for each request/response'})
     )
 
     def execute(arguments):
@@ -94,28 +97,6 @@ class Web(cli.Tool):
           result of the call. ``Falsy`` return values will be passed to
           :py:meth:`sys.exit` and converted into Unix-style return codes. '''
 
-      # respect caching killswitch
-      if arguments.nocache:
-        logging.info('Static caching disabled.')
-        if 'devserver' in config and 'static' in config['devserver'] and 'caching' in config['devserver']['static']:
-          config['devserver']['static']['caching']['enabled'] = False
-        else:
-          config['devserver'] = {'debug': True}
-
-      # respect profiler
-      if arguments.profile:
-        logging.info('Python profiler enabled.')
-        if 'apptools.system' in config and 'hooks' in config['apptools.system']:
-          if 'profiler' in config['apptools.system']['hooks']:
-            config['apptools.system']['hooks']['profiler']['enabled'] = True
-          else:
-            config['apptools.system']['hooks']['profiler'] = {'enabled': True}
-        else:
-          if 'apptools.system' not in config: config['apptools.system'] = {'hooks': {}}
-          config['apptools.system']['hooks'] = {
-            'profiler': {'enabled': True}
-          }
-
       # start the devserver yo
       return devserver.devserver(**{
         'root': os.path.dirname(os.path.dirname(__file__)),
@@ -123,7 +104,10 @@ class Web(cli.Tool):
         'port': arguments.port or 8080,
         'label': 'apptools-sample',
         'services_only': arguments.services_only,
-        'cli': __name__ is '__main__'
+        'cli': __name__ is '__main__',
+        'nocache': arguments.nocache,
+        'profiler': arguments.profile,
+        'callgrapher': arguments.callgraph
       })
 
   class Test(cli.Tool):
