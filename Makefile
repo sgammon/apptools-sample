@@ -19,6 +19,22 @@
 HOST=127.0.0.1
 PORT=5000
 
+extensions=on
+gevent=on
+logbook=on
+
+ifeq ($(extensions),on)
+ifeq ($(gevent),on)
+OPTIONALS+=gevent
+endif
+ifeq ($(logbook),on)
+OPTIONALS+=logbook
+endif
+endif
+
+blab:
+	@echo $(OPTIONALS)
+
 
 ### === ROUTINES === ###
 
@@ -97,14 +113,12 @@ bin: .env
 lib: .env
 
 ### === defs === ###
-.develop: bin lib config.rb .env
+.develop: bin lib config.rb .env $(OPTIONALS)
 	@echo "Installing brew dependencies..."
 	@-brew install libev
 	@-brew install redis
 
 	@echo "Installing development dependencies..."
-	@-bin/pip install cython "git+git://github.com/surfly/gevent.git#egg=gevent"
-	@-bin/pip install cython "git+git://github.com/keenlabs/logbook.git#egg=logbook"
 	@bin/pip install -r ./requirements.txt
 	@mkdir .develop
 	@chmod -R 775 .develop
@@ -146,3 +160,11 @@ config.rb:
 
 devserver:
 	@echo "Would run devserver."
+
+
+### === C dependencies === ###
+gevent:
+	@-bin/pip install cython "git+git://github.com/surfly/gevent.git#egg=gevent"
+
+logbook:
+	@-bin/pip install cython "git+git://github.com/keenlabs/logbook.git#egg=logbook"
