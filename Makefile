@@ -104,6 +104,7 @@ lib: .env
 
 	@echo "Installing development dependencies..."
 	@-bin/pip install cython "git+git://github.com/surfly/gevent.git#egg=gevent"
+	@-bin/pip install cython "git+git://github.com/mitsuhiko/logbook.git#egg=logbook"
 	@bin/pip install -r ./requirements.txt
 	@mkdir .develop
 	@chmod -R 775 .develop
