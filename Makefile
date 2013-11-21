@@ -32,9 +32,6 @@ OPTIONALS+=logbook
 endif
 endif
 
-blab:
-	@echo $(OPTIONALS)
-
 
 ### === ROUTINES === ###
 
